@@ -4,6 +4,8 @@ import Cropper from "react-easy-crop";
 import Slider from "@material-ui/core/Slider"
 import Button from "@material-ui/core/Button";
 
+import {generateDownload} from "./utils/cropImage";
+
 function App() {
     const [image, setImage] = useState(null);
     const [croppedArea, setCroppedArea] = useState(null);
@@ -23,7 +25,7 @@ function App() {
         setCroppedArea(croppedAreaPixels);
     }
 
-    const uploadImageHandler = (event) => {
+    const onSelectFile = (event) => {
         if (event.target.files && event.target.files.length > 0) {
             const reader = new FileReader();
             reader.readAsDataURL(event.target.files[0]);
@@ -31,6 +33,10 @@ function App() {
                 setImage(reader.result);
             })
         }
+    }
+
+    const onDownLoad = () => {
+        generateDownload(image, croppedArea);
     }
 
     return (
@@ -65,7 +71,7 @@ function App() {
                        accept="image/*"
                        ref={inputRef}
                        style={{display: "none"}}
-                       onChange={uploadImageHandler}
+                       onChange={onSelectFile}
                 />
                 <Button
                     variant="contained"
@@ -77,7 +83,9 @@ function App() {
                 </Button>
                 <Button
                     variant="contained"
-                    color="secondary">
+                    color="secondary"
+                    onClick={onDownLoad}
+                >
                     Download
                 </Button>
             </div>
