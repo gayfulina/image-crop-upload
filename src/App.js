@@ -19,7 +19,8 @@ function App() {
     }
 
     const onCropComplete = (croppedAreaPercentage, croppedAreaPixels) => {
-
+        console.log(croppedAreaPercentage, croppedAreaPixels)
+        setCroppedArea(croppedAreaPixels);
     }
 
     const uploadImageHandler = (event) => {
@@ -33,21 +34,53 @@ function App() {
     }
 
     return (
-        <div className="App">
+        <div className="container">
             <div className="container-cropper">
-                <Cropper image={image} crop={crop} zoom={zoom} aspect={1} onCropChange={setCrop} onZoomChange={setZoom}
-                         onCropComplete={onCropComplete}/>
-                <Slider/>
+                {
+                    image ? <>
+                        <div className="cropper">
+                            <Cropper
+                                image={image}
+                                crop={crop}
+                                zoom={zoom} aspect={1}
+                                onCropChange={setCrop}
+                                onZoomChange={setZoom}
+                                onCropComplete={onCropComplete}/>
+                        </div>
+                        <div className="slider">>
+                            <Slider
+                                min={1}
+                                max={3}
+                                step={0.1}
+                                value={zoom}
+                                onChange={(e, zoom) => setZoom(zoom)}
+                            />
+                        </div>
+                    </> : null
+                }
+
             </div>
-            <div className="container-buttons"></div>
-            <input type="file"
-                   accept="image/*"
-                   ref={inputRef}
-                   style={{display: "none"}}
-                   onChange={uploadImageHandler}
-            />
-            <Button variant="contained" color="primary" onClick={handleClick}>Choose</Button>
-            <Button variant="contained" color="secondary">Download</Button>
+            <div className="container-buttons">
+                <input type="file"
+                       accept="image/*"
+                       ref={inputRef}
+                       style={{display: "none"}}
+                       onChange={uploadImageHandler}
+                />
+                <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={handleClick}
+                    style={{marginRight: "10px"}}
+                >
+                    Choose
+                </Button>
+                <Button
+                    variant="contained"
+                    color="secondary">
+                    Download
+                </Button>
+            </div>
         </div>
     );
 }
