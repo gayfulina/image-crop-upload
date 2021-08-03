@@ -1,17 +1,37 @@
-import React, {useRef, useState} from "react";
+import React, {useRef, useState, useContext} from "react";
 import './cropper.css';
 import {generateDownload} from "../../utils/cropImage";
 import Cropper from "react-easy-crop";
 import Slider from "@material-ui/core/Slider";
 import Button from "@material-ui/core/Button";
+import CancelIcon from '@material-ui/icons/Cancel';
+import {IconButton} from "@material-ui/core";
+import {makeStyles} from "@material-ui/core/styles";
+import {SnackbarContext} from "../snackbar/snackbar";
 
-export default function RenderCropper() {
+const useStyles = makeStyles({
+    iconButton: {
+        position: "absolute",
+        top: "20px",
+        right: "20px"
+    },
+    cancelIcon: {
+        color: "#00a3c8",
+        fontSize: "50px",
+        "&:hover": {
+            color: "red"
+        }
+    },
+})
+
+export default function RenderCropper({handleCropper}) {
     const [image, setImage] = useState(null);
     const [croppedArea, setCroppedArea] = useState(null);
     const [crop, setCrop] = useState({x: 0, y: 0});
     const [zoom, setZoom] = useState(1);
-
     const inputRef = useRef(null);
+    const classes = useStyles();
+    const setStateSnackBarContext = useContext(SnackbarContext);
 
     const handleClick = () => {
         if (inputRef.current) {
@@ -35,11 +55,21 @@ export default function RenderCropper() {
     }
 
     const onDownLoad = () => {
+        if (!image)
+            return setStateSnackBarContext(
+            true,
+            'warning',
+            'Please select an image',
+        );
         generateDownload(image, croppedArea);
     }
 
     return (
         <div className="container">
+            <IconButton className={classes.iconButton} onClick={handleCropper}>
+                <CancelIcon className={classes.cancelIcon}/>
+            </IconButton>
+
             <div className="container-cropper">
                 {
                     image ? <>

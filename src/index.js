@@ -3,10 +3,12 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 
+import RenderSnackBar from "./components/snackbar/snackbar";
+
 ReactDOM.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
-  document.getElementById('root')
+    <RenderSnackBar>
+        <App />
+    </RenderSnackBar>,
+    document.getElementById('root')
 );
 

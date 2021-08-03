@@ -1,6 +1,5 @@
 import React, {useState, useRef, useEffect} from 'react';
 import './avatar.css';
-import Button from '@material-ui/core/Button';
 import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 import Grow from '@material-ui/core/Grow';
 import Paper from '@material-ui/core/Paper';
@@ -10,6 +9,7 @@ import MenuList from '@material-ui/core/MenuList';
 import CameraAltIcon from '@material-ui/icons/CameraAlt';
 import {makeStyles} from '@material-ui/core/styles';
 import {IconButton} from "@material-ui/core";
+import RenderCropper from "../cropper/cropper";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -26,7 +26,7 @@ const useStyles = makeStyles((theme) => ({
         right: "100px",
         backgroundColor: "white",
 
-        "&:hover":{
+        "&:hover": {
             backgroundColor: "white"
         }
     },
@@ -35,6 +35,7 @@ const useStyles = makeStyles((theme) => ({
 export default function RenderAvatar() {
     const classes = useStyles();
     const [open, setOpen] = useState(false);
+    const [showCropper, setShowCropper] = useState(false);
     const anchorRef = useRef(null);
 
     const handleToggle = () => {
@@ -64,40 +65,48 @@ export default function RenderAvatar() {
         prevOpen.current = open;
     }, [open]);
 
+    const handleCropper = () => setShowCropper(prevValue => !prevValue)
+
     return (
-        <div className="avatar-container">
-            <div className="avatar">
-                <img src="" alt="avatar" className="avatar-img"/>
+        <>
+            <div className="avatar-container">
+                <div className="avatar">
+                    <img src="" alt="avatar" className="avatar-img"/>
+                </div>
+
+                <IconButton
+                    className={classes.cameraIcon}
+                    ref={anchorRef}
+                    aria-controls={open ? 'menu-list-grow' : undefined}
+                    aria-haspopup="true"
+                    onClick={handleToggle}
+                >
+                    <CameraAltIcon fontSize="large"/>
+                </IconButton>
+
+                <Popper open={open} anchorEl={anchorRef.current} role={undefined} transition disablePortal>
+                    {({TransitionProps, placement}) => (
+                        <Grow
+                            {...TransitionProps}
+                            style={{transformOrigin: placement === 'bottom' ? 'center top' : 'center bottom'}}
+                        >
+                            <Paper>
+                                <ClickAwayListener onClickAway={handleClose}>
+                                    <MenuList autoFocusItem={open} id="menu-list-grow" onKeyDown={handleListKeyDown}>
+                                        <MenuItem onClick={handleClose}>View</MenuItem>
+                                        <MenuItem onClick={(event) => {
+                                            handleCropper();
+                                            handleClose(event)
+                                        }}>Change</MenuItem>
+                                        <MenuItem onClick={handleClose}>Remove</MenuItem>
+                                    </MenuList>
+                                </ClickAwayListener>
+                            </Paper>
+                        </Grow>
+                    )}
+                </Popper>
             </div>
-
-            <IconButton
-                className={classes.cameraIcon}
-                ref={anchorRef}
-                aria-controls={open ? 'menu-list-grow' : undefined}
-                aria-haspopup="true"
-                onClick={handleToggle}
-            >
-                <CameraAltIcon fontSize="large"/>
-            </IconButton>
-
-            <Popper open={open} anchorEl={anchorRef.current} role={undefined} transition disablePortal>
-                {({TransitionProps, placement}) => (
-                    <Grow
-                        {...TransitionProps}
-                        style={{transformOrigin: placement === 'bottom' ? 'center top' : 'center bottom'}}
-                    >
-                        <Paper>
-                            <ClickAwayListener onClickAway={handleClose}>
-                                <MenuList autoFocusItem={open} id="menu-list-grow" onKeyDown={handleListKeyDown}>
-                                    <MenuItem onClick={handleClose}>View</MenuItem>
-                                    <MenuItem onClick={handleClose}>Change</MenuItem>
-                                    <MenuItem onClick={handleClose}>Remove</MenuItem>
-                                </MenuList>
-                            </ClickAwayListener>
-                        </Paper>
-                    </Grow>
-                )}
-            </Popper>
-        </div>
+            {showCropper && <RenderCropper handleCropper={handleCropper} />}
+        </>
     )
 }
