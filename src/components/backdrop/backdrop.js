@@ -27,7 +27,7 @@ export default function SimpleBackdrop({children}) {
         <BackDropContext.Provider value={{closeBackDrop, showBackDrop}}>
             <Backdrop className={classes.backdrop}
                       open={open}
-                    //  onClick={closeBackDrop}
+                     onClick={closeBackDrop}
             >
                 <CircularProgress color="inherit" />
             </Backdrop>

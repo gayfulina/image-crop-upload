@@ -1,6 +1,6 @@
 import React, {useRef, useState, useContext} from "react";
 import './cropper.css';
-import {generateDownload} from "../../utils/cropImage";
+import getCroppedImg, {generateDownload} from "../../utils/cropImage";
 import Cropper from "react-easy-crop";
 import Slider from "@material-ui/core/Slider";
 import Button from "@material-ui/core/Button";
@@ -8,6 +8,7 @@ import CancelIcon from '@material-ui/icons/Cancel';
 import {IconButton} from "@material-ui/core";
 import {makeStyles} from "@material-ui/core/styles";
 import {SnackbarContext} from "../snackbar/snackbar";
+import {dataURLtoFile} from "../../utils/dataURLtoFile";
 
 const useStyles = makeStyles({
     iconButton: {
@@ -72,6 +73,19 @@ export default function RenderCropper({handleCropper}) {
                 'Please select an image',
             );
         setImage(null);
+    }
+
+    const onUpload = async () => {
+        if (!image)
+            return setStateSnackBarContext(
+                true,
+                'warning',
+                'Please select an image',
+            );
+        const canvas = await getCroppedImg(image, croppedArea);
+        const canvasDataUrl = canvas.toDataURL("image/jpeg");
+        const convertedUrlToFile = dataURLtoFile(canvasDataUrl, 'cropped-image.jpeg');
+        console.log(convertedUrlToFile)
     }
 
     return (
@@ -143,6 +157,7 @@ export default function RenderCropper({handleCropper}) {
                 <Button
                     variant="contained"
                     color="secondary"
+                    onClick={onUpload}
                 >
                     Upload
                 </Button>
