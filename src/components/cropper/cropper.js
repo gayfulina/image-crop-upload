@@ -57,11 +57,21 @@ export default function RenderCropper({handleCropper}) {
     const onDownLoad = () => {
         if (!image)
             return setStateSnackBarContext(
-            true,
-            'warning',
-            'Please select an image',
-        );
+                true,
+                'warning',
+                'Please select an image',
+            );
         generateDownload(image, croppedArea);
+    }
+
+    const onClear = () => {
+        if (!image)
+            return setStateSnackBarContext(
+                true,
+                'warning',
+                'Please select an image',
+            );
+        setImage(null);
     }
 
     return (
@@ -107,7 +117,7 @@ export default function RenderCropper({handleCropper}) {
                     variant="contained"
                     color="primary"
                     style={{marginRight: "10px"}}
-                    onClick={() => setImage(null)}
+                    onClick={onClear}
                 >
                     Clear
                 </Button>
