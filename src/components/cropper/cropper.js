@@ -9,6 +9,7 @@ import {IconButton} from "@material-ui/core";
 import {makeStyles} from "@material-ui/core/styles";
 import {SnackbarContext} from "../snackbar/snackbar";
 import {dataURLtoFile} from "../../utils/dataURLtoFile";
+import {BackDropContext} from "../backdrop/backdrop";
 
 const useStyles = makeStyles({
     iconButton: {
@@ -25,7 +26,7 @@ const useStyles = makeStyles({
     },
 })
 
-export default function RenderCropper({handleCropper}) {
+export default function RenderCropper({handleCropper, setAvatar}) {
     const [image, setImage] = useState(null);
     const [croppedArea, setCroppedArea] = useState(null);
     const [crop, setCrop] = useState({x: 0, y: 0});
@@ -33,6 +34,9 @@ export default function RenderCropper({handleCropper}) {
     const inputRef = useRef(null);
     const classes = useStyles();
     const setStateSnackBarContext = useContext(SnackbarContext);
+
+    const {closeBackDrop, showBackDrop} = useContext(BackDropContext);
+
 
     const handleClick = () => {
         if (inputRef.current) {
@@ -96,15 +100,20 @@ export default function RenderCropper({handleCropper}) {
             const formData = new FormData;
             formData.append('croppedImage', convertedUrlToFile);
 
+            showBackDrop()
+
          const res = await fetch('http://localhost:9000/api/users/setProfilePic', {
                 method: 'POST',
                 body: formData,
             })
 
             const res2 = await res.json();
-            console.log(res2)
+            console.log(res2);
+            closeBackDrop();
+            setAvatar(res2.data);
 
         } catch (err) {
+            closeBackDrop();
             console.warn(err);
         }
     }

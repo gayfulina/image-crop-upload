@@ -38,6 +38,8 @@ export default function RenderAvatar() {
     const [showCropper, setShowCropper] = useState(false);
     const anchorRef = useRef(null);
 
+    const [avatar, setAvatar] = useState('')
+
     const handleToggle = () => {
         setOpen((prevOpen) => !prevOpen);
     };
@@ -71,7 +73,7 @@ export default function RenderAvatar() {
         <>
             <div className="avatar-container">
                 <div className="avatar">
-                    <img src="" alt="avatar" className="avatar-img"/>
+                    <img src={avatar} alt="avatar" className="avatar-img"/>
                 </div>
 
                 <IconButton
@@ -106,7 +108,7 @@ export default function RenderAvatar() {
                     )}
                 </Popper>
             </div>
-            {showCropper && <RenderCropper handleCropper={handleCropper} />}
+            {showCropper && <RenderCropper handleCropper={handleCropper} setAvatar={setAvatar}/>}
         </>
     )
 }
